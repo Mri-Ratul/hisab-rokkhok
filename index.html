@@ -86,7 +86,7 @@
 
       <div id="exportableArea" class="space-y-4 bg-slate-50 rounded-2xl p-1 w-full">
 
-        <!-- Top Live Summary Card (Shadow / Circle Artifact Removed) -->
+        <!-- Top Live Summary Card -->
         <div class="bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-800 rounded-3xl p-5 text-white shadow-xl shadow-indigo-500/20 relative">
           <div class="flex items-center justify-between opacity-85 mb-1.5">
             <span class="text-xs font-semibold tracking-wide uppercase">সর্বমোট আর্থিক সম্পদ (Net Worth)</span>
@@ -129,7 +129,8 @@
               </div>
               <h2 class="text-sm font-bold text-slate-800">আমার বর্তমান টাকা / তহবিল</h2>
             </div>
-            <button onclick="requestPasswordAndExecute(() => openAddItemModal('balance'))" class="action-btn-exclude inline-flex items-center space-x-1 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1.5 rounded-xl transition-colors active:scale-95">
+            <!-- Direct open, no password -->
+            <button onclick="openAddItemModal('balance')" class="action-btn-exclude inline-flex items-center space-x-1 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1.5 rounded-xl transition-colors active:scale-95">
               <i data-lucide="plus" class="w-3.5 h-3.5"></i>
               <span>যোগ করুন</span>
             </button>
@@ -147,7 +148,8 @@
               </div>
               <h2 class="text-sm font-bold text-slate-800">পাওনা টাকা (কার কাছে পাবো)</h2>
             </div>
-            <button onclick="requestPasswordAndExecute(() => openAddItemModal('receivable'))" class="action-btn-exclude inline-flex items-center space-x-1 text-xs font-semibold text-amber-800 bg-amber-50 hover:bg-amber-100 px-2.5 py-1.5 rounded-xl transition-colors active:scale-95">
+            <!-- Direct open, no password -->
+            <button onclick="openAddItemModal('receivable')" class="action-btn-exclude inline-flex items-center space-x-1 text-xs font-semibold text-amber-800 bg-amber-50 hover:bg-amber-100 px-2.5 py-1.5 rounded-xl transition-colors active:scale-95">
               <i data-lucide="plus" class="w-3.5 h-3.5"></i>
               <span>যোগ করুন</span>
             </button>
@@ -167,6 +169,7 @@
     <!-- Bottom Action Controls -->
     <div class="fixed bottom-0 left-0 right-0 w-full max-w-xl mx-auto p-3.5 sm:p-4 bg-gradient-to-t from-slate-50 via-slate-50/95 to-transparent z-20 pointer-events-none">
       <div class="pointer-events-auto bg-white/95 backdrop-blur-md border border-slate-200 shadow-xl rounded-2xl p-2 flex items-center space-x-2">
+        <!-- Password required only here -->
         <button onclick="requestPasswordAndExecute(saveSnapshotToHistory)" class="flex-1 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center space-x-2 active:scale-95 transition-transform shadow-md shadow-indigo-300">
           <i data-lucide="cloud-upload" class="w-5 h-5"></i>
           <span>তারিখসহ হিস্ট্রি সেভ করুন</span>
@@ -179,7 +182,7 @@
 
   </div>
 
-  <!-- HIDDEN SLIP VOUCHER (Compact, Identical to Modal Screenshot) -->
+  <!-- HIDDEN SLIP VOUCHER -->
   <div id="hiddenSlipWrapper" style="position: fixed; left: -9999px; top: -9999px; width: 440px;">
     <div id="cleanSlipVoucher" class="bg-white p-5 rounded-3xl border border-slate-200 space-y-3 font-sans">
       <div class="border-b border-slate-100 pb-2">
@@ -218,8 +221,8 @@
 
       <form id="passwordForm" onsubmit="handlePasswordSubmit(event)" class="space-y-3">
         <div>
-          <label class="block text-xs font-medium text-slate-500 mb-1">পাসওয়ার্ড লিখুন (বাংলায়)</label>
-          <input type="text" id="passwordInput" placeholder="রক্ষক" required autocomplete="off" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50 font-sans">
+          <label class="block text-xs font-medium text-slate-500 mb-1">পাসওয়ার্ড লিখুন</label>
+          <input type="password" id="passwordInput" placeholder="••••••" required autocomplete="off" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50 font-sans tracking-widest text-center">
         </div>
         <button type="submit" class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs rounded-xl shadow-md shadow-indigo-100 active:scale-95 transition-all">
           যাচাই করুন
@@ -312,8 +315,8 @@
     </div>
   </div>
 
-  <!-- Toast -->
-<div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-[9999] bg-slate-900 text-white text-xs font-medium px-4 py-2.5 rounded-full shadow-2xl opacity-0 pointer-events-none transition-all duration-300 flex items-center space-x-2">
+  <!-- Toast (Top Z-Index) -->
+  <div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-[9999] bg-slate-900 text-white text-xs font-medium px-4 py-2.5 rounded-full shadow-2xl opacity-0 pointer-events-none transition-all duration-300 flex items-center space-x-2">
     <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
     <span id="toastMsg">সফলভাবে সম্পন্ন হয়েছে!</span>
   </div>
@@ -342,7 +345,7 @@
     const db = getFirestore(app);
     const docRef = doc(db, "hisab_data", "user_account_main");
 
-    // Start with blank active screen on reload/load for security
+    // Fresh blank start on page reload
     let appData = { balances: [], receivables: [] };
     let historyRecords = [];
     let pendingCallback = null;
@@ -382,7 +385,7 @@
       }
     }
 
-    // Password Protection Logic
+    // Password Protection Logic (Used strictly for Cloud Save & History Delete)
     window.requestPasswordAndExecute = function(callback) {
       pendingCallback = callback;
       document.getElementById('passwordInput').value = '';
@@ -399,13 +402,11 @@
       e.preventDefault();
       const entered = document.getElementById('passwordInput').value.trim();
       
-      // পাসওয়ার্ড 'রক্ষক' অথবা ব্যাকআপ হিসেবে '১২৩' / '123' গ্রহণ করবে
       if (entered === 'রক্ষক' || entered === '১২৩' || entered === '123') {
         const actionToExecute = pendingCallback;
         window.closePasswordModal();
         window.showToast('পাসওয়ার্ড সঠিক হয়েছে!');
         
-        // মডাল ট্রানজিশন ক্লিয়ার হতে ১০০ms বিরতি
         if (actionToExecute) {
           setTimeout(() => {
             actionToExecute();
@@ -441,7 +442,7 @@
       let totalBalance = 0;
       let totalReceivable = 0;
 
-      // Render Balances with Strict Vertical Center Alignment
+      // Render Balances (Normal edit/delete without password)
       if (!appData.balances || appData.balances.length === 0) {
         balanceListEl.innerHTML = `<div class="py-6 text-center text-slate-400 text-xs">কোনো ব্যালেন্স সক্রিয় নেই। হিস্ট্রি থেকে আনুন বা "যোগ করুন" চাপুন।</div>`;
       } else {
@@ -456,10 +457,10 @@
               <div class="flex items-center space-x-2 self-center shrink-0">
                 <span class="text-sm font-bold font-mono text-emerald-600 whitespace-nowrap">৳ ${formatMoney(item.amount)}</span>
                 <div class="action-buttons-group flex items-center space-x-1">
-                  <button onclick="window.requestPasswordAndExecute(() => window.editItem('balance', '${item.id}'))" class="p-1.5 text-slate-400 hover:text-indigo-600 rounded-lg transition-colors">
+                  <button onclick="window.editItem('balance', '${item.id}')" class="p-1.5 text-slate-400 hover:text-indigo-600 rounded-lg transition-colors">
                     <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
                   </button>
-                  <button onclick="window.requestPasswordAndExecute(() => window.deleteItem('balance', '${item.id}'))" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg transition-colors">
+                  <button onclick="window.deleteItem('balance', '${item.id}')" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg transition-colors">
                     <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                   </button>
                 </div>
@@ -468,7 +469,7 @@
         }).join('');
       }
 
-      // Render Receivables with Strict Vertical Center Alignment
+      // Render Receivables (Normal edit/delete without password)
       if (!appData.receivables || appData.receivables.length === 0) {
         receivableListEl.innerHTML = `<div class="py-6 text-center text-slate-400 text-xs">কোনো পাওনা সক্রিয় নেই। হিস্ট্রি থেকে আনুন বা "যোগ করুন" চাপুন।</div>`;
       } else {
@@ -483,10 +484,10 @@
               <div class="flex items-center space-x-2 self-center shrink-0">
                 <span class="text-sm font-bold font-mono text-amber-700 whitespace-nowrap">৳ ${formatMoney(item.amount)}</span>
                 <div class="action-buttons-group flex items-center space-x-1">
-                  <button onclick="window.requestPasswordAndExecute(() => window.editItem('receivable', '${item.id}'))" class="p-1.5 text-slate-400 hover:text-indigo-600 rounded-lg transition-colors">
+                  <button onclick="window.editItem('receivable', '${item.id}')" class="p-1.5 text-slate-400 hover:text-indigo-600 rounded-lg transition-colors">
                     <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
                   </button>
-                  <button onclick="window.requestPasswordAndExecute(() => window.deleteItem('receivable', '${item.id}'))" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg transition-colors">
+                  <button onclick="window.deleteItem('receivable', '${item.id}')" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg transition-colors">
                     <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                   </button>
                 </div>
@@ -504,6 +505,7 @@
       if (window.lucide) lucide.createIcons();
     }
 
+    // Modal controls for Adding / Editing (No Password)
     window.openAddItemModal = function(category) {
       document.getElementById('itemId').value = '';
       document.getElementById('itemCategory').value = category;
@@ -587,7 +589,7 @@
       window.showToast('হিসাব মুছে ফেলা হয়েছে');
     };
 
-    // Save Snapshot
+    // Save Snapshot to History (Called after password verification)
     window.saveSnapshotToHistory = function() {
       const now = new Date();
       const dateStr = now.toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' });
@@ -638,6 +640,7 @@
                   <button onclick="window.viewSnapshotDetail('${snap.id}')" class="px-2.5 py-1 text-xs font-semibold bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg transition-colors">
                     বিস্তারিত
                   </button>
+                  <!-- Password requested only on deleting saved cloud history -->
                   <button onclick="window.requestPasswordAndExecute(() => window.deleteSnapshot('${snap.id}'))" class="p-1 text-slate-400 hover:text-rose-600 rounded-lg transition-colors">
                     <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                   </button>
@@ -784,7 +787,7 @@
       });
     };
 
-    // Clean Summary Slip Voucher PNG Export (Compact, matches screenshot 3)
+    // Clean Summary Slip Voucher PNG Export
     window.exportSlipVoucherPNG = async function() {
       window.showToast('রসিদ স্লিপ তৈরি হচ্ছে, অপেক্ষা করুন...');
 
