@@ -49,11 +49,11 @@
     body {
       -webkit-tap-highlight-color: transparent;
       user-select: none;
+      font-family: 'Hind Siliguri', 'Inter', sans-serif;
     }
     input, textarea {
       user-select: text;
     }
-    /* Smooth custom scrollbars */
     ::-webkit-scrollbar {
       width: 4px;
       height: 4px;
@@ -62,11 +62,14 @@
       background: #cbd5e1;
       border-radius: 9999px;
     }
+    .bangla-text {
+      line-height: 1.5;
+    }
   </style>
 </head>
 <body class="h-full font-sans text-slate-800 flex flex-col antialiased selection:bg-indigo-500 selection:text-white bg-slate-100">
 
-  <!-- Responsive Container (Fits Edge-to-Edge on any DPI phone, gracefully centers on large screens) -->
+  <!-- Responsive Container -->
   <div class="w-full max-w-xl mx-auto min-h-screen flex flex-col bg-slate-50 relative pb-28 shadow-sm">
 
     <!-- Top Sticky Header -->
@@ -85,8 +88,8 @@
       </div>
       
       <div class="flex items-center space-x-1.5">
-        <!-- PNG Download Button -->
-        <button onclick="exportToImage()" title="পিএনজি হিসেবে সেভ করুন" class="p-2 rounded-xl text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 active:scale-95 transition-all">
+        <!-- Top PNG Download Button: Full Dashboard View (Format 1) -->
+        <button onclick="exportFullDashboardPNG()" title="সম্পূর্ণ স্ক্রিন ছবি ডাউনলোড করুন" class="p-2 rounded-xl text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 active:scale-95 transition-all">
           <i data-lucide="download" class="w-5 h-5"></i>
         </button>
         <!-- History Records Button -->
@@ -100,15 +103,15 @@
     <!-- Main Scrollable Content -->
     <main class="flex-1 p-3.5 sm:p-5 space-y-4 overflow-y-auto w-full">
 
-      <!-- Printable & Exportable Canvas Container -->
-      <div id="exportableArea" class="space-y-4 bg-slate-50 rounded-2xl p-0.5 w-full">
+      <!-- Printable & Exportable Canvas Container (Full Dashboard) -->
+      <div id="exportableArea" class="space-y-4 bg-slate-50 rounded-2xl p-1 w-full">
 
         <!-- Top Live Summary Card -->
         <div class="bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-800 rounded-3xl p-5 text-white shadow-xl shadow-indigo-500/20 relative overflow-hidden">
           <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
           
           <div class="flex items-center justify-between opacity-85 mb-1.5">
-            <span class="text-xs font-medium tracking-wide uppercase">সর্বমোট আর্থিক সম্পদ (Net Worth)</span>
+            <span class="text-xs font-semibold tracking-wide uppercase">সর্বমোট আর্থিক সম্পদ (Net Worth)</span>
             <i data-lucide="sparkles" class="w-4 h-4 text-amber-300"></i>
           </div>
           <div class="text-3xl font-extrabold tracking-tight font-mono mb-4 flex items-baseline">
@@ -149,7 +152,7 @@
               </div>
               <h2 class="text-sm font-bold text-slate-800">আমার বর্তমান টাকা / তহবিল</h2>
             </div>
-            <button onclick="openAddItemModal('balance')" class="inline-flex items-center space-x-1 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1.5 rounded-xl transition-colors active:scale-95">
+            <button onclick="openAddItemModal('balance')" class="action-btn-exclude inline-flex items-center space-x-1 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1.5 rounded-xl transition-colors active:scale-95">
               <i data-lucide="plus" class="w-3.5 h-3.5"></i>
               <span>যোগ করুন</span>
             </button>
@@ -168,7 +171,7 @@
               </div>
               <h2 class="text-sm font-bold text-slate-800">পাওনা টাকা (কার কাছে পাবো)</h2>
             </div>
-            <button onclick="openAddItemModal('receivable')" class="inline-flex items-center space-x-1 text-xs font-semibold text-amber-800 bg-amber-50 hover:bg-amber-100 px-2.5 py-1.5 rounded-xl transition-colors active:scale-95">
+            <button onclick="openAddItemModal('receivable')" class="action-btn-exclude inline-flex items-center space-x-1 text-xs font-semibold text-amber-800 bg-amber-50 hover:bg-amber-100 px-2.5 py-1.5 rounded-xl transition-colors active:scale-95">
               <i data-lucide="plus" class="w-3.5 h-3.5"></i>
               <span>যোগ করুন</span>
             </button>
@@ -194,13 +197,40 @@
           <i data-lucide="cloud-upload" class="w-5 h-5"></i>
           <span>তারিখসহ হিস্ট্রি সেভ করুন</span>
         </button>
-        <button onclick="exportToImage()" title="পিএনজি ডাউনলোড" class="w-12 h-12 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center active:scale-95 transition-all">
+        <!-- Bottom PNG Download Button: Clean Summary Voucher Slip (Format 4) -->
+        <button onclick="exportSlipVoucherPNG()" title="রসিদ স্লিপ ছবি ডাউনলোড করুন" class="w-12 h-12 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center active:scale-95 transition-all">
           <i data-lucide="image-down" class="w-5 h-5"></i>
         </button>
       </div>
     </div>
 
   </div> <!-- End Main Container -->
+
+  <!-- ==================== HIDDEN SLIP VOUCHER CONTAINER (FOR 4TH IMAGE FORMAT) ==================== -->
+  <div id="hiddenSlipWrapper" style="position: fixed; left: -9999px; top: -9999px; width: 440px;">
+    <div id="cleanSlipVoucher" class="bg-white p-5 rounded-3xl border border-slate-200 space-y-3.5 font-sans">
+      <div class="border-b border-slate-100 pb-2.5">
+        <span class="text-xs text-indigo-600 font-bold block" id="voucherDateTime">--</span>
+        <h3 class="text-lg font-black text-slate-900 mt-0.5" id="voucherGrandTotal">মোট সম্পদ: ৳ ০</h3>
+      </div>
+      
+      <!-- Balances Slip Box -->
+      <div class="p-3.5 bg-emerald-50/80 rounded-2xl border border-emerald-100 space-y-2">
+        <h4 class="text-xs font-bold text-emerald-800" id="voucherBalanceHeader">বর্তমান তহবিল (মোট: ৳ ০)</h4>
+        <div id="voucherBalanceItems" class="space-y-1.5 text-xs text-slate-700"></div>
+      </div>
+
+      <!-- Receivables Slip Box -->
+      <div class="p-3.5 bg-amber-50/80 rounded-2xl border border-amber-100 space-y-2">
+        <h4 class="text-xs font-bold text-amber-900" id="voucherReceivableHeader">পাওনা টাকা (মোট: ৳ ০)</h4>
+        <div id="voucherReceivableItems" class="space-y-1.5 text-xs text-slate-700"></div>
+      </div>
+
+      <div class="text-[10px] text-center text-slate-400 pt-1">
+        হিসাব রক্ষক • ডিজিটাল আর্থিক বিবরণী স্লিপ
+      </div>
+    </div>
+  </div>
 
   <!-- ==================== MODALS ==================== -->
 
@@ -402,19 +432,21 @@
         balanceListEl.innerHTML = appData.balances.map(item => {
           totalBalance += Number(item.amount || 0);
           return `
-            <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 hover:bg-slate-100/80 transition-colors border border-slate-100">
+            <div class="balance-item flex items-center justify-between p-3 rounded-2xl bg-slate-50 hover:bg-slate-100/80 transition-colors border border-slate-100">
               <div class="flex-1 min-w-0 pr-2">
-                <p class="text-sm font-semibold text-slate-800 truncate">${escapeHtml(item.title)}</p>
-                ${item.note ? `<p class="text-xs text-slate-500 truncate">${escapeHtml(item.note)}</p>` : ''}
+                <p class="text-sm font-semibold text-slate-800 truncate item-title leading-relaxed">${escapeHtml(item.title)}</p>
+                ${item.note ? `<p class="text-xs text-slate-500 truncate item-note leading-relaxed">${escapeHtml(item.note)}</p>` : ''}
               </div>
               <div class="flex items-center space-x-2">
-                <span class="text-sm font-bold font-mono text-emerald-600">৳ ${formatMoney(item.amount)}</span>
-                <button onclick="window.editItem('balance', '${item.id}')" class="p-1.5 text-slate-400 hover:text-indigo-600 rounded-lg transition-colors">
-                  <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
-                </button>
-                <button onclick="window.deleteItem('balance', '${item.id}')" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg transition-colors">
-                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                </button>
+                <span class="text-sm font-bold font-mono text-emerald-600 item-amount whitespace-nowrap">৳ ${formatMoney(item.amount)}</span>
+                <div class="action-buttons-group flex items-center space-x-1">
+                  <button onclick="window.editItem('balance', '${item.id}')" class="p-1.5 text-slate-400 hover:text-indigo-600 rounded-lg transition-colors">
+                    <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                  </button>
+                  <button onclick="window.deleteItem('balance', '${item.id}')" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg transition-colors">
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                  </button>
+                </div>
               </div>
             </div>`;
         }).join('');
@@ -427,19 +459,21 @@
         receivableListEl.innerHTML = appData.receivables.map(item => {
           totalReceivable += Number(item.amount || 0);
           return `
-            <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 hover:bg-slate-100/80 transition-colors border border-slate-100">
+            <div class="receivable-item flex items-center justify-between p-3 rounded-2xl bg-slate-50 hover:bg-slate-100/80 transition-colors border border-slate-100">
               <div class="flex-1 min-w-0 pr-2">
-                <p class="text-sm font-semibold text-slate-800 truncate">${escapeHtml(item.title)}</p>
-                ${item.note ? `<p class="text-xs text-slate-500 truncate">${escapeHtml(item.note)}</p>` : ''}
+                <p class="text-sm font-semibold text-slate-800 truncate item-title leading-relaxed">${escapeHtml(item.title)}</p>
+                ${item.note ? `<p class="text-xs text-slate-500 truncate item-note leading-relaxed">${escapeHtml(item.note)}</p>` : ''}
               </div>
               <div class="flex items-center space-x-2">
-                <span class="text-sm font-bold font-mono text-amber-700">৳ ${formatMoney(item.amount)}</span>
-                <button onclick="window.editItem('receivable', '${item.id}')" class="p-1.5 text-slate-400 hover:text-indigo-600 rounded-lg transition-colors">
-                  <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
-                </button>
-                <button onclick="window.deleteItem('receivable', '${item.id}')" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg transition-colors">
-                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                </button>
+                <span class="text-sm font-bold font-mono text-amber-700 item-amount whitespace-nowrap">৳ ${formatMoney(item.amount)}</span>
+                <div class="action-buttons-group flex items-center space-x-1">
+                  <button onclick="window.editItem('receivable', '${item.id}')" class="p-1.5 text-slate-400 hover:text-indigo-600 rounded-lg transition-colors">
+                    <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                  </button>
+                  <button onclick="window.deleteItem('receivable', '${item.id}')" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg transition-colors">
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                  </button>
+                </div>
               </div>
             </div>`;
         }).join('');
@@ -460,7 +494,7 @@
       if (window.lucide) lucide.createIcons();
     }
 
-    // Window Functions for HTML Buttons
+    // Modal controls for Adding / Editing
     window.openAddItemModal = function(category) {
       document.getElementById('itemId').value = '';
       document.getElementById('itemCategory').value = category;
@@ -547,7 +581,7 @@
       window.showToast('হিসাব মুছে ফেলা হয়েছে');
     };
 
-    // History Snapshot
+    // Save Snapshot to Cloud History
     window.saveSnapshotToHistory = function() {
       const now = new Date();
       const dateStr = now.toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' });
@@ -574,6 +608,7 @@
       window.showToast('তারিখসহ ক্লাউডে হিস্ট্রি সংরক্ষিত হয়েছে!');
     };
 
+    // History Modal Open
     window.openHistoryModal = function() {
       const container = document.getElementById('historyListContainer');
 
@@ -693,9 +728,9 @@
       document.getElementById('snapshotDetailModal').classList.add('hidden');
     };
 
-    // PNG Download
-    window.exportToImage = async function() {
-      window.showToast('ছবি প্রস্তুত করা হচ্ছে...');
+    // ==================== PNG EXPORT 1: FULL DASHBOARD SCREEN (TOP BUTTON) ====================
+    window.exportFullDashboardPNG = async function() {
+      window.showToast('সম্পূর্ণ শিট প্রস্তুত হচ্ছে, অপেক্ষা করুন...');
       const exportElement = document.getElementById('exportableArea');
       const timeStampWatermark = document.getElementById('exportTimestamp');
       const timeSpan = document.getElementById('snapshotDateTime');
@@ -704,25 +739,124 @@
       timeSpan.innerText = `${now.toLocaleDateString('bn-BD')} (${now.toLocaleTimeString('bn-BD')})`;
       timeStampWatermark.classList.remove('hidden');
 
-      try {
-        const canvas = await html2canvas(exportElement, {
+      const readyPromise = document.fonts ? document.fonts.ready : Promise.resolve();
+
+      readyPromise.then(() => {
+        return html2canvas(exportElement, {
           scale: 2.5,
           useCORS: true,
           backgroundColor: '#f8fafc',
-          logging: false
-        });
+          logging: false,
+          scrollY: -window.scrollY,
+          onclone: (clonedDoc) => {
+            // ১. এডিট ও ডিলিট আইকন এবং বাটনগুলো রিমুভ যাতে রসিদ ক্লিন থাকে
+            const excludeButtons = clonedDoc.querySelectorAll('.action-buttons-group, .action-btn-exclude');
+            excludeButtons.forEach(btn => btn.style.display = 'none');
 
+            // ২. বাংলা ফন্টের নিচের অংশ যাতে কেটে না যায় (Font Clipping Fix from Electricity Bill)
+            const textNodes = clonedDoc.querySelectorAll('p, span, h1, h2, h3, h4, div');
+            textNodes.forEach(el => {
+              el.style.fontFamily = '"Hind Siliguri", "Inter", sans-serif';
+              el.style.lineHeight = '1.6';
+              el.style.overflow = 'visible';
+            });
+
+            // ৩. আইটেম টাইটেল ও অ্যামাউন্ট প্যাডিং ফিক্স
+            const items = clonedDoc.querySelectorAll('.balance-item, .receivable-item');
+            items.forEach(item => {
+              item.style.paddingTop = '10px';
+              item.style.paddingBottom = '12px';
+              item.style.marginBottom = '6px';
+            });
+          }
+        });
+      }).then(canvas => {
+        const now = new Date();
+        const dateStr = `${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()}`;
         const link = document.createElement('a');
-        link.download = `Hisab_Report_${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()}.png`;
-        link.href = canvas.toDataURL('image/png');
+        link.download = `Hisab_Dashboard_${dateStr}.png`;
+        link.href = canvas.toDataURL('image/png', 1.0);
         link.click();
-        window.showToast('পিএনজি ফাইল গ্যালারিতে সেভ হয়েছে!');
-      } catch (err) {
-        console.error("Export error:", err);
+        window.showToast('ফুল ড্যাশবোর্ড PNG ডাউনলোড সম্পন্ন হয়েছে!');
+      }).catch(err => {
+        console.error("Dashboard Export Error:", err);
         window.showToast('ছবি তৈরিতে ত্রুটি হয়েছে');
-      } finally {
+      }).finally(() => {
         timeStampWatermark.classList.add('hidden');
+      });
+    };
+
+    // ==================== PNG EXPORT 2: CLEAN SUMMARY SLIP VOUCHER (BOTTOM BUTTON) ====================
+    window.exportSlipVoucherPNG = async function() {
+      window.showToast('রসিদ স্লিপ তৈরি হচ্ছে, অপেক্ষা করুন...');
+
+      const now = new Date();
+      const dateFormatted = now.toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' });
+      const timeFormatted = now.toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' });
+
+      const totalBalance = appData.balances.reduce((sum, i) => sum + Number(i.amount || 0), 0);
+      const totalReceivable = appData.receivables.reduce((sum, i) => sum + Number(i.amount || 0), 0);
+      const grandTotal = totalBalance + totalReceivable;
+
+      // Populate Hidden Slip
+      document.getElementById('voucherDateTime').innerText = `${dateFormatted} | ${timeFormatted}`;
+      document.getElementById('voucherGrandTotal').innerText = `মোট সম্পদ: ৳${formatMoney(grandTotal)}`;
+      document.getElementById('voucherBalanceHeader').innerText = `বর্তমান তহবিল (মোট: ৳${formatMoney(totalBalance)})`;
+      document.getElementById('voucherReceivableHeader').innerText = `পাওনা টাকা (মোট: ৳${formatMoney(totalReceivable)})`;
+
+      const balContainer = document.getElementById('voucherBalanceItems');
+      if (!appData.balances || appData.balances.length === 0) {
+        balContainer.innerHTML = `<div class="italic text-slate-400 py-1">কোনো তহবিল নেই</div>`;
+      } else {
+        balContainer.innerHTML = appData.balances.map(b => `
+          <div class="flex justify-between py-1.5 border-b border-emerald-100/70">
+            <span class="font-medium text-slate-800 leading-relaxed">${escapeHtml(b.title)} ${b.note ? `<span class="text-[10px] text-slate-400">(${escapeHtml(b.note)})</span>` : ''}</span>
+            <span class="font-bold font-mono text-emerald-700 whitespace-nowrap">৳${formatMoney(b.amount)}</span>
+          </div>
+        `).join('');
       }
+
+      const recContainer = document.getElementById('voucherReceivableItems');
+      if (!appData.receivables || appData.receivables.length === 0) {
+        recContainer.innerHTML = `<div class="italic text-slate-400 py-1">কোনো পাওনা নেই</div>`;
+      } else {
+        recContainer.innerHTML = appData.receivables.map(r => `
+          <div class="flex justify-between py-1.5 border-b border-amber-100/70">
+            <span class="font-medium text-slate-800 leading-relaxed">${escapeHtml(r.title)} ${r.note ? `<span class="text-[10px] text-slate-400">(${escapeHtml(r.note)})</span>` : ''}</span>
+            <span class="font-bold font-mono text-amber-800 whitespace-nowrap">৳${formatMoney(r.amount)}</span>
+          </div>
+        `).join('');
+      }
+
+      const targetSlip = document.getElementById('cleanSlipVoucher');
+      const readyPromise = document.fonts ? document.fonts.ready : Promise.resolve();
+
+      readyPromise.then(() => {
+        return html2canvas(targetSlip, {
+          scale: 2.6,
+          useCORS: true,
+          backgroundColor: '#ffffff',
+          logging: false,
+          onclone: (clonedDoc) => {
+            const slipTexts = clonedDoc.querySelectorAll('#cleanSlipVoucher *');
+            slipTexts.forEach(el => {
+              el.style.fontFamily = '"Hind Siliguri", "Inter", sans-serif';
+              el.style.lineHeight = '1.6';
+              el.style.overflow = 'visible';
+            });
+          }
+        });
+      }).then(canvas => {
+        const dateStr = `${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()}`;
+        const link = document.createElement('a');
+        link.download = `Hisab_Slip_${dateStr}.png`;
+        link.href = canvas.toDataURL('image/png', 1.0);
+        link.click();
+        window.showToast('স্লিপ ভাউচার PNG ডাউনলোড সম্পন্ন হয়েছে!');
+      }).catch(err => {
+        console.error("Voucher Slip Export Error:", err);
+        window.showToast('ভাউচার তৈরিতে ত্রুটি হয়েছে');
+      });
     };
 
     window.showToast = function(message) {
