@@ -5,21 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>হিসাব রক্ষক</title>
   
-  <!-- Website Tab Favicon / Logo -->
+  <!-- Favicon / Logo -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%236366f1'/><stop offset='100%' stop-color='%234338ca'/></linearGradient></defs><rect width='100' height='100' rx='28' fill='url(%23g)'/><text x='50%' y='67%' font-family='sans-serif' font-weight='900' font-size='56' fill='%23ffffff' text-anchor='middle'>৳</text></svg>">
   
-  <!-- Google Fonts: Hind Siliguri for Bengali & Inter for Numbers -->
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   
-  <!-- Tailwind CSS CDN -->
+  <!-- Tailwind CSS & Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  
-  <!-- html2canvas for PNG Export -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <script>
@@ -29,15 +25,6 @@
           fontFamily: {
             sans: ['"Hind Siliguri"', '"Inter"', 'sans-serif'],
             mono: ['"Inter"', 'monospace']
-          },
-          colors: {
-            brand: {
-              50: '#eef2ff',
-              100: '#e0e7ff',
-              500: '#6366f1',
-              600: '#4f46e5',
-              700: '#4338ca',
-            }
           }
         }
       }
@@ -45,7 +32,6 @@
   </script>
 
   <style>
-    /* Mobile-first optimizations */
     body {
       -webkit-tap-highlight-color: transparent;
       user-select: none;
@@ -62,17 +48,14 @@
       background: #cbd5e1;
       border-radius: 9999px;
     }
-    .bangla-text {
-      line-height: 1.5;
-    }
   </style>
 </head>
-<body class="h-full font-sans text-slate-800 flex flex-col antialiased selection:bg-indigo-500 selection:text-white bg-slate-100">
+<body class="h-full font-sans text-slate-800 flex flex-col antialiased bg-slate-100">
 
-  <!-- Responsive Container -->
+  <!-- Responsive Mobile App Container -->
   <div class="w-full max-w-xl mx-auto min-h-screen flex flex-col bg-slate-50 relative pb-28 shadow-sm">
 
-    <!-- Top Sticky Header -->
+    <!-- Header -->
     <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-slate-200/80 px-4 py-3.5 flex items-center justify-between">
       <div class="flex items-center space-x-2.5">
         <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-md shadow-indigo-200">
@@ -88,11 +71,9 @@
       </div>
       
       <div class="flex items-center space-x-1.5">
-        <!-- Top PNG Download Button: Full Dashboard View (Format 1) -->
-        <button onclick="exportFullDashboardPNG()" title="সম্পূর্ণ স্ক্রিন ছবি ডাউনলোড করুন" class="p-2 rounded-xl text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 active:scale-95 transition-all">
+        <button onclick="exportFullDashboardPNG()" title="সম্পূর্ণ স্ক্রিন ছবি ডাউনলোড" class="p-2 rounded-xl text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 active:scale-95 transition-all">
           <i data-lucide="download" class="w-5 h-5"></i>
         </button>
-        <!-- History Records Button -->
         <button onclick="openHistoryModal()" title="সংরক্ষিত হিস্ট্রি দেখুন" class="p-2 rounded-xl text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 active:scale-95 transition-all relative">
           <i data-lucide="history" class="w-5 h-5"></i>
           <span id="historyBadge" class="hidden absolute top-1 right-1 w-2.5 h-2.5 bg-rose-500 rounded-full ring-2 ring-white"></span>
@@ -100,16 +81,13 @@
       </div>
     </header>
 
-    <!-- Main Scrollable Content -->
+    <!-- Main Content -->
     <main class="flex-1 p-3.5 sm:p-5 space-y-4 overflow-y-auto w-full">
 
-      <!-- Printable & Exportable Canvas Container (Full Dashboard) -->
       <div id="exportableArea" class="space-y-4 bg-slate-50 rounded-2xl p-1 w-full">
 
-        <!-- Top Live Summary Card -->
-        <div class="bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-800 rounded-3xl p-5 text-white shadow-xl shadow-indigo-500/20 relative overflow-hidden">
-          <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
-          
+        <!-- Top Live Summary Card (Shadow / Circle Artifact Removed) -->
+        <div class="bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-800 rounded-3xl p-5 text-white shadow-xl shadow-indigo-500/20 relative">
           <div class="flex items-center justify-between opacity-85 mb-1.5">
             <span class="text-xs font-semibold tracking-wide uppercase">সর্বমোট আর্থিক সম্পদ (Net Worth)</span>
             <i data-lucide="sparkles" class="w-4 h-4 text-amber-300"></i>
@@ -119,7 +97,6 @@
             <span id="grandTotal">০</span>
           </div>
 
-          <!-- Breakdown pills -->
           <div class="grid grid-cols-2 gap-2.5 pt-3 border-t border-white/15">
             <div class="bg-white/10 rounded-2xl p-2.5 backdrop-blur-sm border border-white/10">
               <div class="flex items-center space-x-1.5 text-emerald-300 text-xs font-medium mb-1">
@@ -152,13 +129,12 @@
               </div>
               <h2 class="text-sm font-bold text-slate-800">আমার বর্তমান টাকা / তহবিল</h2>
             </div>
-            <button onclick="openAddItemModal('balance')" class="action-btn-exclude inline-flex items-center space-x-1 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1.5 rounded-xl transition-colors active:scale-95">
+            <button onclick="requestPasswordAndExecute(() => openAddItemModal('balance'))" class="action-btn-exclude inline-flex items-center space-x-1 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1.5 rounded-xl transition-colors active:scale-95">
               <i data-lucide="plus" class="w-3.5 h-3.5"></i>
               <span>যোগ করুন</span>
             </button>
           </div>
 
-          <!-- Balance List -->
           <div id="balanceList" class="space-y-2"></div>
         </div>
 
@@ -171,71 +147,89 @@
               </div>
               <h2 class="text-sm font-bold text-slate-800">পাওনা টাকা (কার কাছে পাবো)</h2>
             </div>
-            <button onclick="openAddItemModal('receivable')" class="action-btn-exclude inline-flex items-center space-x-1 text-xs font-semibold text-amber-800 bg-amber-50 hover:bg-amber-100 px-2.5 py-1.5 rounded-xl transition-colors active:scale-95">
+            <button onclick="requestPasswordAndExecute(() => openAddItemModal('receivable'))" class="action-btn-exclude inline-flex items-center space-x-1 text-xs font-semibold text-amber-800 bg-amber-50 hover:bg-amber-100 px-2.5 py-1.5 rounded-xl transition-colors active:scale-95">
               <i data-lucide="plus" class="w-3.5 h-3.5"></i>
               <span>যোগ করুন</span>
             </button>
           </div>
 
-          <!-- Receivables List -->
           <div id="receivableList" class="space-y-2"></div>
         </div>
 
-        <!-- Timestamp watermark in exported image -->
         <div id="exportTimestamp" class="text-center text-[11px] text-slate-400 py-2 hidden">
           হিসাব সংরক্ষণের সময়: <span id="snapshotDateTime"></span>
         </div>
 
-      </div><!-- End Exportable Container -->
+      </div>
 
     </main>
 
-    <!-- Bottom Sticky Floating Bar -->
+    <!-- Bottom Action Controls -->
     <div class="fixed bottom-0 left-0 right-0 w-full max-w-xl mx-auto p-3.5 sm:p-4 bg-gradient-to-t from-slate-50 via-slate-50/95 to-transparent z-20 pointer-events-none">
       <div class="pointer-events-auto bg-white/95 backdrop-blur-md border border-slate-200 shadow-xl rounded-2xl p-2 flex items-center space-x-2">
-        <button onclick="saveSnapshotToHistory()" class="flex-1 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center space-x-2 active:scale-95 transition-transform shadow-md shadow-indigo-300">
+        <button onclick="requestPasswordAndExecute(saveSnapshotToHistory)" class="flex-1 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center space-x-2 active:scale-95 transition-transform shadow-md shadow-indigo-300">
           <i data-lucide="cloud-upload" class="w-5 h-5"></i>
           <span>তারিখসহ হিস্ট্রি সেভ করুন</span>
         </button>
-        <!-- Bottom PNG Download Button: Clean Summary Voucher Slip (Format 4) -->
-        <button onclick="exportSlipVoucherPNG()" title="রসিদ স্লিপ ছবি ডাউনলোড করুন" class="w-12 h-12 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center active:scale-95 transition-all">
+        <button onclick="exportSlipVoucherPNG()" title="রসিদ স্লিপ ছবি ডাউনলোড" class="w-12 h-12 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center active:scale-95 transition-all">
           <i data-lucide="image-down" class="w-5 h-5"></i>
         </button>
       </div>
     </div>
 
-  </div> <!-- End Main Container -->
+  </div>
 
-  <!-- ==================== HIDDEN SLIP VOUCHER CONTAINER (FOR 4TH IMAGE FORMAT) ==================== -->
+  <!-- HIDDEN SLIP VOUCHER (Compact, Identical to Modal Screenshot) -->
   <div id="hiddenSlipWrapper" style="position: fixed; left: -9999px; top: -9999px; width: 440px;">
-    <div id="cleanSlipVoucher" class="bg-white p-5 rounded-3xl border border-slate-200 space-y-3.5 font-sans">
-      <div class="border-b border-slate-100 pb-2.5">
-        <span class="text-xs text-indigo-600 font-bold block" id="voucherDateTime">--</span>
-        <h3 class="text-lg font-black text-slate-900 mt-0.5" id="voucherGrandTotal">মোট সম্পদ: ৳ ০</h3>
+    <div id="cleanSlipVoucher" class="bg-white p-5 rounded-3xl border border-slate-200 space-y-3 font-sans">
+      <div class="border-b border-slate-100 pb-2">
+        <span class="text-xs text-indigo-600 font-semibold block" id="voucherDateTime">--</span>
+        <h3 class="text-lg font-bold text-slate-900 mt-0.5 tracking-tight" id="voucherGrandTotal">মোট সম্পদ: ৳ ০</h3>
       </div>
       
       <!-- Balances Slip Box -->
-      <div class="p-3.5 bg-emerald-50/80 rounded-2xl border border-emerald-100 space-y-2">
-        <h4 class="text-xs font-bold text-emerald-800" id="voucherBalanceHeader">বর্তমান তহবিল (মোট: ৳ ০)</h4>
-        <div id="voucherBalanceItems" class="space-y-1.5 text-xs text-slate-700"></div>
+      <div class="p-3 bg-emerald-50 rounded-2xl border border-emerald-100">
+        <h4 class="text-xs font-bold text-emerald-800 mb-1.5" id="voucherBalanceHeader">বর্তমান তহবিল (মোট: ৳ ০)</h4>
+        <div id="voucherBalanceItems" class="space-y-1 text-xs text-slate-700"></div>
       </div>
 
       <!-- Receivables Slip Box -->
-      <div class="p-3.5 bg-amber-50/80 rounded-2xl border border-amber-100 space-y-2">
-        <h4 class="text-xs font-bold text-amber-900" id="voucherReceivableHeader">পাওনা টাকা (মোট: ৳ ০)</h4>
-        <div id="voucherReceivableItems" class="space-y-1.5 text-xs text-slate-700"></div>
-      </div>
-
-      <div class="text-[10px] text-center text-slate-400 pt-1">
-        হিসাব রক্ষক • ডিজিটাল আর্থিক বিবরণী স্লিপ
+      <div class="p-3 bg-amber-50 rounded-2xl border border-amber-100">
+        <h4 class="text-xs font-bold text-amber-900 mb-1.5" id="voucherReceivableHeader">পাওনা টাকা (মোট: ৳ ০)</h4>
+        <div id="voucherReceivableItems" class="space-y-1 text-xs text-slate-700"></div>
       </div>
     </div>
   </div>
 
-  <!-- ==================== MODALS ==================== -->
+  <!-- PASSWORD MODAL -->
+  <div id="passwordModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-xs rounded-3xl p-5 shadow-2xl space-y-3.5 border border-slate-100">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <div class="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+            <i data-lucide="lock" class="w-4 h-4"></i>
+          </div>
+          <h3 class="text-sm font-bold text-slate-900">নিরাপত্তা পাসওয়ার্ড</h3>
+        </div>
+        <button onclick="closePasswordModal()" class="w-7 h-7 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center">
+          <i data-lucide="x" class="w-3.5 h-3.5"></i>
+        </button>
+      </div>
 
-  <!-- Add / Edit Item Modal -->
-  <div id="itemModal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs hidden flex items-end sm:items-center justify-center transition-opacity p-0 sm:p-4">
+      <form id="passwordForm" onsubmit="handlePasswordSubmit(event)" class="space-y-3">
+        <div>
+          <label class="block text-xs font-medium text-slate-500 mb-1">পাসওয়ার্ড লিখুন (বাংলায়)</label>
+          <input type="password" id="passwordInput" placeholder="রক্ষক" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50">
+        </div>
+        <button type="submit" class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs rounded-xl shadow-md shadow-indigo-100 active:scale-95 transition-all">
+          যাচাই করুন
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ADD / EDIT MODAL -->
+  <div id="itemModal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-white w-full max-w-xl rounded-t-3xl sm:rounded-3xl p-5 shadow-2xl space-y-4">
       <div class="flex items-center justify-between border-b pb-3 border-slate-100">
         <h3 id="modalTitle" class="text-base font-bold text-slate-900">হিসাব যোগ করুন</h3>
@@ -271,8 +265,8 @@
     </div>
   </div>
 
-  <!-- Saved Snapshots / History Modal -->
-  <div id="historyModal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs hidden flex items-end sm:items-center justify-center transition-opacity p-0 sm:p-4">
+  <!-- SAVED HISTORY MODAL -->
+  <div id="historyModal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-white w-full max-w-xl h-[82vh] rounded-t-3xl sm:rounded-3xl p-5 shadow-2xl flex flex-col">
       <div class="flex items-center justify-between border-b pb-3 border-slate-100">
         <div class="flex items-center space-x-2">
@@ -284,7 +278,6 @@
         </button>
       </div>
 
-      <!-- History list scroll area -->
       <div id="historyListContainer" class="flex-1 overflow-y-auto py-3 space-y-2.5"></div>
 
       <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
@@ -294,7 +287,7 @@
     </div>
   </div>
 
-  <!-- History Detail View Modal -->
+  <!-- HISTORY DETAIL MODAL -->
   <div id="snapshotDetailModal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-white w-full max-w-xl max-h-[85vh] rounded-t-3xl sm:rounded-3xl p-5 shadow-2xl flex flex-col">
       <div class="flex items-center justify-between border-b pb-3 border-slate-100">
@@ -319,13 +312,13 @@
     </div>
   </div>
 
-  <!-- Toast Element -->
+  <!-- Toast -->
   <div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white text-xs font-medium px-4 py-2.5 rounded-full shadow-lg opacity-0 pointer-events-none transition-all duration-300 flex items-center space-x-2">
     <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
     <span id="toastMsg">সফলভাবে সম্পন্ন হয়েছে!</span>
   </div>
 
-  <!-- Firebase & App Logic -->
+  <!-- Firebase & App Script -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
     import { 
@@ -335,7 +328,6 @@
       onSnapshot 
     } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
-    // আপনার Firebase কনফিগারেশন
     const firebaseConfig = {
       apiKey: "AIzaSyDwZElC_VTBx8fqBdzLzTLQkRDi5xyj7Ac",
       authDomain: "hisab-rokkhok-85f4a.firebaseapp.com",
@@ -350,58 +342,73 @@
     const db = getFirestore(app);
     const docRef = doc(db, "hisab_data", "user_account_main");
 
-    const defaultData = {
-      balances: [
-        { id: 'b_1', title: 'নগদ টাকা (Cash)', amount: 0, note: 'মানিব্যাগে আছে' },
-        { id: 'b_2', title: 'বিকাশ (bKash)', amount: 0, note: 'ব্যক্তিগত একাউন্ট' },
-        { id: 'b_3', title: 'ব্যাংক জমা (Bank)', amount: 0, note: 'সঞ্চয়ী হিসাব' }
-      ],
-      receivables: [],
-      history: []
-    };
-
+    // Start with blank active screen on reload/load for security
     let appData = { balances: [], receivables: [] };
     let historyRecords = [];
+    let pendingCallback = null;
 
-    // Cloud Listener
+    // Listen to Firebase Cloud Firestore
     onSnapshot(docRef, (docSnap) => {
       if (docSnap.exists()) {
         const cloud = docSnap.data();
-        appData.balances = cloud.balances || [];
-        appData.receivables = cloud.receivables || [];
         historyRecords = cloud.history || [];
-      } else {
-        appData = JSON.parse(JSON.stringify(defaultData));
-        historyRecords = [];
-        syncCloud();
       }
-      render();
+      updateHistoryBadge();
     }, (err) => {
-      console.warn("Firestore listener fallback to localStorage:", err);
-      loadFallback();
+      console.warn("Firestore listener fallback:", err);
+      const savedHistory = localStorage.getItem('hisab_backup_history');
+      historyRecords = savedHistory ? JSON.parse(savedHistory) : [];
+      updateHistoryBadge();
     });
 
     async function syncCloud() {
       try {
         await setDoc(docRef, {
-          balances: appData.balances,
-          receivables: appData.receivables,
           history: historyRecords
-        });
+        }, { merge: true });
       } catch (err) {
         console.error("Cloud sync error:", err);
-        localStorage.setItem('hisab_backup_data', JSON.stringify(appData));
         localStorage.setItem('hisab_backup_history', JSON.stringify(historyRecords));
+      }
+      updateHistoryBadge();
+    }
+
+    function updateHistoryBadge() {
+      const historyBadge = document.getElementById('historyBadge');
+      if (historyRecords && historyRecords.length > 0) {
+        historyBadge.classList.remove('hidden');
+      } else {
+        historyBadge.classList.add('hidden');
       }
     }
 
-    function loadFallback() {
-      const savedData = localStorage.getItem('hisab_backup_data');
-      const savedHistory = localStorage.getItem('hisab_backup_history');
-      appData = savedData ? JSON.parse(savedData) : defaultData;
-      historyRecords = savedHistory ? JSON.parse(savedHistory) : [];
-      render();
-    }
+    // Password Protection Logic
+    window.requestPasswordAndExecute = function(callback) {
+      pendingCallback = callback;
+      document.getElementById('passwordInput').value = '';
+      document.getElementById('passwordModal').classList.remove('hidden');
+      setTimeout(() => document.getElementById('passwordInput').focus(), 150);
+    };
+
+    window.closePasswordModal = function() {
+      document.getElementById('passwordModal').classList.add('hidden');
+      pendingCallback = null;
+    };
+
+    window.handlePasswordSubmit = function(e) {
+      e.preventDefault();
+      const entered = document.getElementById('passwordInput').value.trim();
+      if (entered === 'রক্ষক') {
+        window.closePasswordModal();
+        if (pendingCallback) {
+          pendingCallback();
+          pendingCallback = null;
+        }
+      } else {
+        window.showToast('ভুল পাসওয়ার্ড! অ্যাক্সেস প্রত্যাখ্যাত');
+        document.getElementById('passwordInput').value = '';
+      }
+    };
 
     function formatMoney(num) {
       if (isNaN(num)) return '০';
@@ -425,25 +432,25 @@
       let totalBalance = 0;
       let totalReceivable = 0;
 
-      // Render Balances
+      // Render Balances with Strict Vertical Center Alignment
       if (!appData.balances || appData.balances.length === 0) {
-        balanceListEl.innerHTML = `<div class="py-6 text-center text-slate-400 text-xs">কোনো ব্যালেন্স যুক্ত করা নেই। "যোগ করুন" চাপুন।</div>`;
+        balanceListEl.innerHTML = `<div class="py-6 text-center text-slate-400 text-xs">কোনো ব্যালেন্স সক্রিয় নেই। হিস্ট্রি থেকে আনুন বা "যোগ করুন" চাপুন।</div>`;
       } else {
         balanceListEl.innerHTML = appData.balances.map(item => {
           totalBalance += Number(item.amount || 0);
           return `
             <div class="balance-item flex items-center justify-between p-3 rounded-2xl bg-slate-50 hover:bg-slate-100/80 transition-colors border border-slate-100">
-              <div class="flex-1 min-w-0 pr-2">
-                <p class="text-sm font-semibold text-slate-800 truncate item-title leading-relaxed">${escapeHtml(item.title)}</p>
-                ${item.note ? `<p class="text-xs text-slate-500 truncate item-note leading-relaxed">${escapeHtml(item.note)}</p>` : ''}
+              <div class="flex-1 min-w-0 pr-2 flex flex-col justify-center">
+                <p class="text-sm font-semibold text-slate-800 truncate leading-snug">${escapeHtml(item.title)}</p>
+                ${item.note ? `<p class="text-xs text-slate-500 truncate leading-snug mt-0.5">${escapeHtml(item.note)}</p>` : ''}
               </div>
-              <div class="flex items-center space-x-2">
-                <span class="text-sm font-bold font-mono text-emerald-600 item-amount whitespace-nowrap">৳ ${formatMoney(item.amount)}</span>
+              <div class="flex items-center space-x-2 self-center shrink-0">
+                <span class="text-sm font-bold font-mono text-emerald-600 whitespace-nowrap">৳ ${formatMoney(item.amount)}</span>
                 <div class="action-buttons-group flex items-center space-x-1">
-                  <button onclick="window.editItem('balance', '${item.id}')" class="p-1.5 text-slate-400 hover:text-indigo-600 rounded-lg transition-colors">
+                  <button onclick="window.requestPasswordAndExecute(() => window.editItem('balance', '${item.id}'))" class="p-1.5 text-slate-400 hover:text-indigo-600 rounded-lg transition-colors">
                     <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
                   </button>
-                  <button onclick="window.deleteItem('balance', '${item.id}')" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg transition-colors">
+                  <button onclick="window.requestPasswordAndExecute(() => window.deleteItem('balance', '${item.id}'))" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg transition-colors">
                     <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                   </button>
                 </div>
@@ -452,25 +459,25 @@
         }).join('');
       }
 
-      // Render Receivables
+      // Render Receivables with Strict Vertical Center Alignment
       if (!appData.receivables || appData.receivables.length === 0) {
-        receivableListEl.innerHTML = `<div class="py-6 text-center text-slate-400 text-xs">কোনো পাওনা টাকার তথ্য নেই। "যোগ করুন" চাপুন।</div>`;
+        receivableListEl.innerHTML = `<div class="py-6 text-center text-slate-400 text-xs">কোনো পাওনা সক্রিয় নেই। হিস্ট্রি থেকে আনুন বা "যোগ করুন" চাপুন।</div>`;
       } else {
         receivableListEl.innerHTML = appData.receivables.map(item => {
           totalReceivable += Number(item.amount || 0);
           return `
             <div class="receivable-item flex items-center justify-between p-3 rounded-2xl bg-slate-50 hover:bg-slate-100/80 transition-colors border border-slate-100">
-              <div class="flex-1 min-w-0 pr-2">
-                <p class="text-sm font-semibold text-slate-800 truncate item-title leading-relaxed">${escapeHtml(item.title)}</p>
-                ${item.note ? `<p class="text-xs text-slate-500 truncate item-note leading-relaxed">${escapeHtml(item.note)}</p>` : ''}
+              <div class="flex-1 min-w-0 pr-2 flex flex-col justify-center">
+                <p class="text-sm font-semibold text-slate-800 truncate leading-snug">${escapeHtml(item.title)}</p>
+                ${item.note ? `<p class="text-xs text-slate-500 truncate leading-snug mt-0.5">${escapeHtml(item.note)}</p>` : ''}
               </div>
-              <div class="flex items-center space-x-2">
-                <span class="text-sm font-bold font-mono text-amber-700 item-amount whitespace-nowrap">৳ ${formatMoney(item.amount)}</span>
+              <div class="flex items-center space-x-2 self-center shrink-0">
+                <span class="text-sm font-bold font-mono text-amber-700 whitespace-nowrap">৳ ${formatMoney(item.amount)}</span>
                 <div class="action-buttons-group flex items-center space-x-1">
-                  <button onclick="window.editItem('receivable', '${item.id}')" class="p-1.5 text-slate-400 hover:text-indigo-600 rounded-lg transition-colors">
+                  <button onclick="window.requestPasswordAndExecute(() => window.editItem('receivable', '${item.id}'))" class="p-1.5 text-slate-400 hover:text-indigo-600 rounded-lg transition-colors">
                     <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
                   </button>
-                  <button onclick="window.deleteItem('receivable', '${item.id}')" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg transition-colors">
+                  <button onclick="window.requestPasswordAndExecute(() => window.deleteItem('receivable', '${item.id}'))" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg transition-colors">
                     <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                   </button>
                 </div>
@@ -484,17 +491,10 @@
       document.getElementById('receivableTotal').innerText = formatMoney(totalReceivable);
       document.getElementById('grandTotal').innerText = formatMoney(grandTotal);
 
-      const historyBadge = document.getElementById('historyBadge');
-      if (historyRecords.length > 0) {
-        historyBadge.classList.remove('hidden');
-      } else {
-        historyBadge.classList.add('hidden');
-      }
-
+      updateHistoryBadge();
       if (window.lucide) lucide.createIcons();
     }
 
-    // Modal controls for Adding / Editing
     window.openAddItemModal = function(category) {
       document.getElementById('itemId').value = '';
       document.getElementById('itemCategory').value = category;
@@ -567,21 +567,18 @@
         window.showToast('নতুন হিসাব যুক্ত করা হয়েছে');
       }
 
-      syncCloud();
       render();
       window.closeItemModal();
     };
 
     window.deleteItem = function(category, id) {
-      if (!confirm("আপনি কি নিশ্চিতভাবে এই হিসাবটি মুছে ফেলতে চান?")) return;
       const listKey = category === 'balance' ? 'balances' : 'receivables';
       appData[listKey] = appData[listKey].filter(item => item.id !== id);
-      syncCloud();
       render();
       window.showToast('হিসাব মুছে ফেলা হয়েছে');
     };
 
-    // Save Snapshot to Cloud History
+    // Save Snapshot
     window.saveSnapshotToHistory = function() {
       const now = new Date();
       const dateStr = now.toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' });
@@ -608,7 +605,6 @@
       window.showToast('তারিখসহ ক্লাউডে হিস্ট্রি সংরক্ষিত হয়েছে!');
     };
 
-    // History Modal Open
     window.openHistoryModal = function() {
       const container = document.getElementById('historyListContainer');
 
@@ -617,7 +613,7 @@
           <div class="h-full flex flex-col items-center justify-center text-slate-400 py-12 text-center">
             <i data-lucide="cloud-off" class="w-10 h-10 mb-2 stroke-1"></i>
             <p class="text-sm font-semibold">কোনো সংরক্ষিত হিস্ট্রি নেই</p>
-            <p class="text-xs">নিচের "তারিখসহ হিস্ট্রি সেভ করুন" বাটনে ক্লিক করে বর্তমান হিসাব স্ন্যাপশট হিসেবে সেভ করতে পারবেন।</p>
+            <p class="text-xs">হিসাব তৈরি করে "তারিখসহ হিস্ট্রি সেভ করুন" চাপুন।</p>
           </div>
         `;
       } else {
@@ -633,7 +629,7 @@
                   <button onclick="window.viewSnapshotDetail('${snap.id}')" class="px-2.5 py-1 text-xs font-semibold bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg transition-colors">
                     বিস্তারিত
                   </button>
-                  <button onclick="window.deleteSnapshot('${snap.id}')" class="p-1 text-slate-400 hover:text-rose-600 rounded-lg transition-colors">
+                  <button onclick="window.requestPasswordAndExecute(() => window.deleteSnapshot('${snap.id}'))" class="p-1 text-slate-400 hover:text-rose-600 rounded-lg transition-colors">
                     <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                   </button>
                 </div>
@@ -667,11 +663,9 @@
     };
 
     window.deleteSnapshot = function(snapId) {
-      if (!confirm("এই হিস্ট্রি স্ন্যাপশট মুছে ফেলতে চান?")) return;
       historyRecords = historyRecords.filter(s => s.id !== snapId);
       syncCloud();
       window.openHistoryModal();
-      render();
       window.showToast('সংরক্ষিত রেকর্ডটি মুছে ফেলা হয়েছে');
     };
 
@@ -714,7 +708,6 @@
       const restoreBtn = document.getElementById('restoreSnapshotBtn');
       restoreBtn.onclick = () => {
         appData = JSON.parse(JSON.stringify(snap.data));
-        syncCloud();
         render();
         window.closeSnapshotDetailModal();
         window.closeHistoryModal();
@@ -728,7 +721,7 @@
       document.getElementById('snapshotDetailModal').classList.add('hidden');
     };
 
-    // ==================== PNG EXPORT 1: FULL DASHBOARD SCREEN (TOP BUTTON) ====================
+    // Full Dashboard PNG Export
     window.exportFullDashboardPNG = async function() {
       window.showToast('সম্পূর্ণ শিট প্রস্তুত হচ্ছে, অপেক্ষা করুন...');
       const exportElement = document.getElementById('exportableArea');
@@ -749,29 +742,25 @@
           logging: false,
           scrollY: -window.scrollY,
           onclone: (clonedDoc) => {
-            // ১. এডিট ও ডিলিট আইকন এবং বাটনগুলো রিমুভ যাতে রসিদ ক্লিন থাকে
             const excludeButtons = clonedDoc.querySelectorAll('.action-buttons-group, .action-btn-exclude');
             excludeButtons.forEach(btn => btn.style.display = 'none');
 
-            // ২. বাংলা ফন্টের নিচের অংশ যাতে কেটে না যায় (Font Clipping Fix from Electricity Bill)
             const textNodes = clonedDoc.querySelectorAll('p, span, h1, h2, h3, h4, div');
             textNodes.forEach(el => {
               el.style.fontFamily = '"Hind Siliguri", "Inter", sans-serif';
-              el.style.lineHeight = '1.6';
+              el.style.lineHeight = '1.45';
               el.style.overflow = 'visible';
             });
 
-            // ৩. আইটেম টাইটেল ও অ্যামাউন্ট প্যাডিং ফিক্স
             const items = clonedDoc.querySelectorAll('.balance-item, .receivable-item');
             items.forEach(item => {
               item.style.paddingTop = '10px';
-              item.style.paddingBottom = '12px';
+              item.style.paddingBottom = '10px';
               item.style.marginBottom = '6px';
             });
           }
         });
       }).then(canvas => {
-        const now = new Date();
         const dateStr = `${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()}`;
         const link = document.createElement('a');
         link.download = `Hisab_Dashboard_${dateStr}.png`;
@@ -786,7 +775,7 @@
       });
     };
 
-    // ==================== PNG EXPORT 2: CLEAN SUMMARY SLIP VOUCHER (BOTTOM BUTTON) ====================
+    // Clean Summary Slip Voucher PNG Export (Compact, matches screenshot 3)
     window.exportSlipVoucherPNG = async function() {
       window.showToast('রসিদ স্লিপ তৈরি হচ্ছে, অপেক্ষা করুন...');
 
@@ -798,7 +787,6 @@
       const totalReceivable = appData.receivables.reduce((sum, i) => sum + Number(i.amount || 0), 0);
       const grandTotal = totalBalance + totalReceivable;
 
-      // Populate Hidden Slip
       document.getElementById('voucherDateTime').innerText = `${dateFormatted} | ${timeFormatted}`;
       document.getElementById('voucherGrandTotal').innerText = `মোট সম্পদ: ৳${formatMoney(grandTotal)}`;
       document.getElementById('voucherBalanceHeader').innerText = `বর্তমান তহবিল (মোট: ৳${formatMoney(totalBalance)})`;
@@ -809,9 +797,9 @@
         balContainer.innerHTML = `<div class="italic text-slate-400 py-1">কোনো তহবিল নেই</div>`;
       } else {
         balContainer.innerHTML = appData.balances.map(b => `
-          <div class="flex justify-between py-1.5 border-b border-emerald-100/70">
-            <span class="font-medium text-slate-800 leading-relaxed">${escapeHtml(b.title)} ${b.note ? `<span class="text-[10px] text-slate-400">(${escapeHtml(b.note)})</span>` : ''}</span>
-            <span class="font-bold font-mono text-emerald-700 whitespace-nowrap">৳${formatMoney(b.amount)}</span>
+          <div class="flex justify-between py-1 border-b border-emerald-100/50">
+            <span class="font-medium text-slate-800">${escapeHtml(b.title)} ${b.note ? `<span class="text-[10px] text-slate-400">(${escapeHtml(b.note)})</span>` : ''}</span>
+            <span class="font-bold font-mono text-slate-800 whitespace-nowrap">৳${formatMoney(b.amount)}</span>
           </div>
         `).join('');
       }
@@ -821,9 +809,9 @@
         recContainer.innerHTML = `<div class="italic text-slate-400 py-1">কোনো পাওনা নেই</div>`;
       } else {
         recContainer.innerHTML = appData.receivables.map(r => `
-          <div class="flex justify-between py-1.5 border-b border-amber-100/70">
-            <span class="font-medium text-slate-800 leading-relaxed">${escapeHtml(r.title)} ${r.note ? `<span class="text-[10px] text-slate-400">(${escapeHtml(r.note)})</span>` : ''}</span>
-            <span class="font-bold font-mono text-amber-800 whitespace-nowrap">৳${formatMoney(r.amount)}</span>
+          <div class="flex justify-between py-1 border-b border-amber-100/50">
+            <span class="font-medium text-slate-800">${escapeHtml(r.title)} ${r.note ? `<span class="text-[10px] text-slate-400">(${escapeHtml(r.note)})</span>` : ''}</span>
+            <span class="font-bold font-mono text-slate-800 whitespace-nowrap">৳${formatMoney(r.amount)}</span>
           </div>
         `).join('');
       }
@@ -841,7 +829,7 @@
             const slipTexts = clonedDoc.querySelectorAll('#cleanSlipVoucher *');
             slipTexts.forEach(el => {
               el.style.fontFamily = '"Hind Siliguri", "Inter", sans-serif';
-              el.style.lineHeight = '1.6';
+              el.style.lineHeight = '1.35';
               el.style.overflow = 'visible';
             });
           }
@@ -872,12 +860,11 @@
       }, 2500);
     };
 
-    // Initialize Header Date
     window.addEventListener('DOMContentLoaded', () => {
       const now = new Date();
       const options = { day: 'numeric', month: 'long', year: 'numeric' };
       document.getElementById('headerDate').innerText = now.toLocaleDateString('bn-BD', options);
-      if (window.lucide) lucide.createIcons();
+      render();
     });
   </script>
 </body>
