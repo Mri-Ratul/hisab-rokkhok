@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>হিসাব রক্ষক - Hisab Rokkhok</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- html2canvas for PNG Export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap');
+    body {
+      font-family: 'Hind Siliguri', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col items-center p-3 sm:p-5 select-none pb-24">
+
+  <!-- Main Container -->
+  <div class="w-full max-w-md flex flex-col gap-4">
+
+    <!-- Top Bar -->
+    <header class="flex items-center justify-between bg-slate-800/80 backdrop-blur px-4 py-3 rounded-2xl border border-slate-700/60 shadow-lg">
+      <div class="flex items-center gap-2">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 font-bold text-lg shadow-md">
+          ৳
+        </div>
+        <div>
+          <h1 class="text-base font-bold leading-tight tracking-wide">হিসাব রক্ষক</h1>
+          <p class="text-[11px] text-emerald-400 flex items-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> ক্লাউড সিঙ্ক চালু
+          </p>
+        </div>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="downloadAsPNG()" title="PNG ডাউনলোড করুন" class="w-9 h-9 bg-slate-700 hover:bg-slate-600 rounded-xl flex items-center justify-center text-slate-200 transition active:scale-95 border border-slate-600">
+          <i class="fa-solid fa-camera"></i>
+        </button>
+        <button onclick="openModal('historyModal')" title="হিস্ট্রি দেখুন" class="w-9 h-9 bg-slate-700 hover:bg-slate-600 rounded-xl flex items-center justify-center text-slate-200 transition active:scale-95 border border-slate-600">
+          <i class="fa-solid fa-clock-rotate-left"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Printable & Visible Area for PNG Export -->
+    <div id="captureArea" class="bg-slate-900 flex flex-col gap-4 rounded-3xl p-1">
+
+      <!-- Summary Dashboard Cards -->
+      <div class="grid grid-cols-2 gap-3">
+        <!-- Present Assets -->
+        <div class="bg-gradient-to-br from-emerald-950/60 to-slate-800/90 border border-emerald-500/30 p-3.5 rounded-2xl flex flex-col justify-between shadow-md">
+          <div class="flex items-center justify-between text-emerald-400 mb-1">
+            <span class="text-xs font-semibold">বর্তমান তহবিল</span>
+            <i class="fa-solid fa-wallet text-sm"></i>
+          </div>
+          <div class="text-lg font-bold tracking-tight text-emerald-300" id="totalAssetsDisplay">৳ 0</div>
+          <span class="text-[10px] text-slate-400 mt-0.5">ব্যাংক, নগদ ও ওয়ালেট</span>
+        </div>
+
+        <!-- Receivables -->
+        <div class="bg-gradient-to-br from-amber-950/60 to-slate-800/90 border border-amber-500/30 p-3.5 rounded-2xl flex flex-col justify-between shadow-md">
+          <div class="flex items-center justify-between text-amber-400 mb-1">
+            <span class="text-xs font-semibold">পাওনা টাকা</span>
+            <i class="fa-solid fa-hand-holding-dollar text-sm"></i>
+          </div>
+          <div class="text-lg font-bold tracking-tight text-amber-300" id="totalReceivablesDisplay">৳ 0</div>
+          <span class="text-[10px] text-slate-400 mt-0.5">অন্যদের কাছে পাওনা</span>
+        </div>
+
+        <!-- Net Total Balance (Full Width) -->
+        <div class="col-span-2 bg-gradient-to-r from-teal-900/40 via-slate-800 to-indigo-950/50 border border-teal-500/40 p-4 rounded-2xl flex items-center justify-between shadow-lg">
+          <div>
+            <div class="text-xs text-slate-300 font-medium flex items-center gap-1.5">
+              <i class="fa-solid fa-chart-pie text-teal-400"></i> সর্বমোট হিসাব (মোট সম্পদ)
+            </div>
+            <div class="text-2xl font-extrabold text-white mt-1" id="grandTotalDisplay">৳ 0</div>
+          </div>
+          <div class="text-right text-[11px] text-slate-400">
+            <div>আজকের তারিখ:</div>
+            <div class="font-semibold text-slate-200 mt-0.5" id="currentDateDisplay">--/--/----</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 1: Present Funds / Current Assets -->
+      <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-4 shadow-sm">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+            <h2 class="text-sm font-bold text-slate-200">বর্তমান জমার হিসাব (কোথায় কত আছে)</h2>
+          </div>
+          <button onclick="openAddEntryModal('asset')" class="text-xs bg-emerald-600/30 text-emerald-400 border border-emerald-500/40 px-2.5 py-1 rounded-lg font-medium active:scale-95 flex items-center gap-1 hover:bg-emerald-600/50">
+            <i class="fa-solid fa-plus text-[10px]"></i> যোগ করুন
+          </button>
+        </div>
+        <div id="assetsList" class="flex flex-col gap-2">
+          <!-- Items will be injected here -->
+        </div>
+      </div>
+
+      <!-- Section 2: Receivables / Money Owed -->
+      <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-4 shadow-sm">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+            <h2 class="text-sm font-bold text-slate-200">পাওনা টাকার তালিকা (কার কাছে পাবেন)</h2>
+          </div>
+          <button onclick="openAddEntryModal('receivable')" class="text-xs bg-amber-600/30 text-amber-400 border border-amber-500/40 px-2.5 py-1 rounded-lg font-medium active:scale-95 flex items-center gap-1 hover:bg-amber-600/50">
+            <i class="fa-solid fa-plus text-[10px]"></i> যোগ করুন
+          </button>
+        </div>
+        <div id="receivablesList" class="flex flex-col gap-2">
+          <!-- Items will be injected here -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom Action Controls -->
+    <div class="grid grid-cols-2 gap-3 mt-1">
+      <button onclick="saveSnapshotToHistory()" class="bg-gradient-to-r from-blue-600 to-indigo-600 active:scale-98 text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-blue-900/30 border border-blue-500/40 text-sm">
+        <i class="fa-solid fa-cloud-arrow-up"></i>
+        <span>হিস্ট্রি সেভ করুন</span>
+      </button>
+
+      <button onclick="downloadAsPNG()" class="bg-gradient-to-r from-emerald-600 to-teal-600 active:scale-98 text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-emerald-900/30 border border-emerald-500/40 text-sm">
+        <i class="fa-solid fa-image"></i>
+        <span>PNG ছবি ডাউনলোড</span>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Entry Modal (Add/Edit) -->
+  <div id="entryModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-800 border border-slate-700 w-full max-w-sm rounded-2xl p-5 shadow-2xl flex flex-col gap-4 animate-scaleUp">
+      <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+        <h3 id="modalTitle" class="font-bold text-base text-slate-100">হিসাব যোগ করুন</h3>
+        <button onclick="closeModal('entryModal')" class="text-slate-400 hover:text-white p-1">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <form id="entryForm" onsubmit="handleFormSubmit(event)" class="flex flex-col gap-3">
+        <input type="hidden" id="entryType" value="asset" />
+        <input type="hidden" id="entryId" value="" />
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1" id="labelTitle">খাতের নাম / ব্যক্তির নাম</label>
+          <input type="text" id="inputTitle" required placeholder="যেমন: ডাচ-বাংলা ব্যাংক বা রফিক ভাই" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">টাকার পরিমাণ (৳)</label>
+          <input type="number" id="inputAmount" step="any" min="0" required placeholder="0.00" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">নোট / মন্তব্য (ঐচ্ছিক)</label>
+          <input type="text" id="inputNote" placeholder="ছোট বিবরণ বা তারিখ" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500" />
+        </div>
+
+        <button type="submit" class="mt-2 w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 font-bold text-slate-950 text-sm transition active:scale-95 shadow-md">
+          সংরক্ষণ করুন
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- History Modal -->
+  <div id="historyModal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-800 border border-slate-700 w-full max-w-md rounded-2xl p-5 shadow-2xl flex flex-col max-h-[85vh]">
+      <div class="flex items-center justify-between border-b border-slate-700 pb-3 mb-3">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-clock-rotate-left text-blue-400"></i>
+          <h3 class="font-bold text-base text-slate-100">সংরক্ষিত হিস্ট্রি ও স্ন্যাপশট</h3>
+        </div>
+        <button onclick="closeModal('historyModal')" class="text-slate-400 hover:text-white p-1">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <div id="historyListContainer" class="overflow-y-auto space-y-3 custom-scrollbar pr-1 flex-1">
+        <!-- Snapshots dynamically listed -->
+      </div>
+    </div>
+  </div>
+
+  <!-- History Detail Preview Modal -->
+  <div id="snapshotDetailModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-800 border border-slate-700 w-full max-w-sm rounded-2xl p-5 shadow-2xl flex flex-col max-h-[85vh]">
+      <div class="flex items-center justify-between border-b border-slate-700 pb-2 mb-3">
+        <div>
+          <h3 class="font-bold text-sm text-slate-200">হিস্ট্রি বিবরণ</h3>
+          <p id="snapshotDateTitle" class="text-xs text-blue-400 mt-0.5">--</p>
+        </div>
+        <button onclick="closeModal('snapshotDetailModal')" class="text-slate-400 hover:text-white p-1">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+      <div id="snapshotDetailContent" class="overflow-y-auto space-y-3 flex-1 text-xs">
+        <!-- Rendered items -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-6 bg-slate-800 text-slate-100 border border-emerald-500/50 shadow-2xl px-4 py-2.5 rounded-xl text-xs font-medium z-50 transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-2">
+    <i class="fa-solid fa-circle-check text-emerald-400"></i>
+    <span id="toastMsg">মেসেজ</span>
+  </div>
+
+  <!-- Firebase Scripts (Modular SDK v10) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+    import { 
+      getFirestore, 
+      doc, 
+      setDoc, 
+      onSnapshot 
+    } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+
+    // আপনার Firebase কনফিগারেশন
+    const firebaseConfig = {
+      apiKey: "AIzaSyDwZElC_VTBx8fqBdzLzTLQkRDi5xyj7Ac",
+      authDomain: "hisab-rokkhok-85f4a.firebaseapp.com",
+      projectId: "hisab-rokkhok-85f4a",
+      storageBucket: "hisab-rokkhok-85f4a.firebasestorage.app",
+      messagingSenderId: "381180661885",
+      appId: "1:381180661885:web:56521aa39d0b5f28ca6114",
+      measurementId: "G-PCET4BL2BL"
+    };
+
+    // Firebase ইনিশিয়ালাইজেশন
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // অ্যাপ স্টেট
+    let state = {
+      assets: [
+        { id: '1', title: 'নগদ টাকা (Cash)', amount: 0, note: 'মানিব্যাগ/হাতে' },
+        { id: '2', title: 'ব্যাংক একাউন্ট', amount: 0, note: 'সঞ্চয়ী হিসাব' },
+        { id: '3', title: 'বিকাশ / নগদ', amount: 0, note: 'মোবাইল ওয়ালেট' }
+      ],
+      receivables: [],
+      history: []
+    };
+
+    const docRef = doc(db, "hisab_data", "user_account_main");
+
+    // Firebase রিয়েল-টাইম লিসেনার
+    onSnapshot(docRef, (docSnap) => {
+      if (docSnap.exists()) {
+        const cloudData = docSnap.data();
+        if (cloudData.assets) state.assets = cloudData.assets;
+        if (cloudData.receivables) state.receivables = cloudData.receivables;
+        if (cloudData.history) state.history = cloudData.history;
+      } else {
+        syncToCloud();
+      }
+      renderAll();
+    }, (error) => {
+      console.warn("Firebase snapshot listener fallback to localStorage:", error);
+      loadFromLocalFallback();
+    });
+
+    async function syncToCloud() {
+      try {
+        await setDoc(docRef, state);
+      } catch (err) {
+        console.error("Cloud sync error, saving locally:", err);
+        localStorage.setItem("hisab_rokkhok_local", JSON.stringify(state));
+      }
+    }
+
+    function loadFromLocalFallback() {
+      const saved = localStorage.getItem("hisab_rokkhok_local");
+      if (saved) {
+        try {
+          state = JSON.parse(saved);
+        } catch(e) {}
+      }
+      renderAll();
+    }
+
+    // UI রেন্ডারিং
+    function renderAll() {
+      renderList('assetsList', state.assets, 'asset');
+      renderList('receivablesList', state.receivables, 'receivable');
+      calculateTotals();
+    }
+
+    function calculateTotals() {
+      const totalAssets = state.assets.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+      const totalReceivables = state.receivables.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+      const grandTotal = totalAssets + totalReceivables;
+
+      document.getElementById('totalAssetsDisplay').innerText = '৳ ' + totalAssets.toLocaleString('bn-BD');
+      document.getElementById('totalReceivablesDisplay').innerText = '৳ ' + totalReceivables.toLocaleString('bn-BD');
+      document.getElementById('grandTotalDisplay').innerText = '৳ ' + grandTotal.toLocaleString('bn-BD');
+
+      const today = new Date();
+      const options = { day: 'numeric', month: 'short', year: 'numeric' };
+      document.getElementById('currentDateDisplay').innerText = today.toLocaleDateString('bn-BD', options);
+    }
+
+    function renderList(containerId, list, type) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+
+      if (list.length === 0) {
+        container.innerHTML = `<div class="text-xs text-slate-500 py-3 text-center italic bg-slate-900/40 rounded-xl">কোন হিসাব যোগ করা হয়নি</div>`;
+        return;
+      }
+
+      list.forEach(item => {
+        const itemEl = document.createElement('div');
+        itemEl.className = 'flex items-center justify-between p-3 bg-slate-900/70 border border-slate-700/50 rounded-xl hover:border-slate-600 transition';
+
+        const badgeColor = type === 'asset' ? 'text-emerald-400' : 'text-amber-400';
+
+        itemEl.innerHTML = `
+          <div class="flex-1 pr-2">
+            <div class="text-sm font-semibold text-slate-200">${item.title}</div>
+            ${item.note ? `<div class="text-[11px] text-slate-400">${item.note}</div>` : ''}
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-sm font-bold ${badgeColor}">৳ ${Number(item.amount).toLocaleString('bn-BD')}</span>
+            <div class="flex items-center gap-1.5 border-l border-slate-700/80 pl-2">
+              <button onclick="window.editItem('${type}', '${item.id}')" class="text-slate-400 hover:text-blue-400 p-1 text-xs">
+                <i class="fa-regular fa-pen-to-square"></i>
+              </button>
+              <button onclick="window.deleteItem('${type}', '${item.id}')" class="text-slate-400 hover:text-rose-400 p-1 text-xs">
+                <i class="fa-regular fa-trash-can"></i>
+              </button>
+            </div>
+          </div>
+        `;
+        container.appendChild(itemEl);
+      });
+    }
+
+    // গ্লোবাল ফাংশনালিটি
+    window.openAddEntryModal = function(type) {
+      document.getElementById('entryForm').reset();
+      document.getElementById('entryId').value = '';
+      document.getElementById('entryType').value = type;
+      
+      const modalTitle = document.getElementById('modalTitle');
+      const labelTitle = document.getElementById('labelTitle');
+
+      if (type === 'asset') {
+        modalTitle.innerText = "বর্তমান তহবিল যোগ করুন";
+        labelTitle.innerText = "খাতের নাম (যেমন: ডাচ-বাংলা, ক্যাশ)";
+      } else {
+        modalTitle.innerText = "পাওনা টাকা যোগ করুন";
+        labelTitle.innerText = "ব্যক্তির নাম / বিবরণ";
+      }
+
+      document.getElementById('entryModal').classList.remove('hidden');
+    };
+
+    window.editItem = function(type, id) {
+      const list = type === 'asset' ? state.assets : state.receivables;
+      const item = list.find(x => x.id === id);
+      if (!item) return;
+
+      document.getElementById('entryType').value = type;
+      document.getElementById('entryId').value = item.id;
+      document.getElementById('inputTitle').value = item.title;
+      document.getElementById('inputAmount').value = item.amount;
+      document.getElementById('inputNote').value = item.note || '';
+
+      document.getElementById('modalTitle').innerText = "হিসাব সম্পাদনা করুন";
+      document.getElementById('entryModal').classList.remove('hidden');
+    };
+
+    window.deleteItem = function(type, id) {
+      if (!confirm("আপনি কি নিশ্চিতভাবে এই হিসাবটি মুছে ফেলতে চান?")) return;
+      if (type === 'asset') {
+        state.assets = state.assets.filter(x => x.id !== id);
+      } else {
+        state.receivables = state.receivables.filter(x => x.id !== id);
+      }
+      renderAll();
+      syncToCloud();
+      showToast("হিসাব মুছে ফেলা হয়েছে");
+    };
+
+    window.handleFormSubmit = function(e) {
+      e.preventDefault();
+      const type = document.getElementById('entryType').value;
+      const id = document.getElementById('entryId').value;
+      const title = document.getElementById('inputTitle').value.trim();
+      const amount = parseFloat(document.getElementById('inputAmount').value) || 0;
+      const note = document.getElementById('inputNote').value.trim();
+
+      const list = type === 'asset' ? state.assets : state.receivables;
+
+      if (id) {
+        const item = list.find(x => x.id === id);
+        if (item) {
+          item.title = title;
+          item.amount = amount;
+          item.note = note;
+        }
+      } else {
+        list.push({
+          id: Date.now().toString(),
+          title,
+          amount,
+          note
+        });
+      }
+
+      window.closeModal('entryModal');
+      renderAll();
+      syncToCloud();
+      showToast("হিসাব সফলভাবে সংরক্ষিত হয়েছে");
+    };
+
+    // হিস্ট্রি ও স্ন্যাপশট সেভ
+    window.saveSnapshotToHistory = function() {
+      const now = new Date();
+      const formattedDate = now.toLocaleDateString('bn-BD', { day: 'numeric', month: 'short', year: 'numeric' });
+      const formattedTime = now.toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' });
+
+      const totalAssets = state.assets.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+      const totalReceivables = state.receivables.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+
+      const snapshot = {
+        id: Date.now().toString(),
+        timestamp: `${formattedDate}, ${formattedTime}`,
+        totalAssets,
+        totalReceivables,
+        grandTotal: totalAssets + totalReceivables,
+        assets: JSON.parse(JSON.stringify(state.assets)),
+        receivables: JSON.parse(JSON.stringify(state.receivables))
+      };
+
+      if (!state.history) state.history = [];
+      state.history.unshift(snapshot);
+      syncToCloud();
+      showToast("তারিখসহ স্ন্যাপশট হিস্ট্রিতে সেভ করা হয়েছে!");
+    };
+
+    // হিস্ট্রি মডাল রেন্ডার
+    window.renderHistoryList = function() {
+      const container = document.getElementById('historyListContainer');
+      container.innerHTML = '';
+
+      if (!state.history || state.history.length === 0) {
+        container.innerHTML = `<div class="text-xs text-slate-500 py-6 text-center italic">এখনো কোনো হিস্ট্রি সেভ করা হয়নি</div>`;
+        return;
+      }
+
+      state.history.forEach(item => {
+        const itemEl = document.createElement('div');
+        itemEl.className = 'bg-slate-900/80 border border-slate-700 p-3 rounded-xl flex items-center justify-between';
+        itemEl.innerHTML = `
+          <div>
+            <div class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
+              <i class="fa-regular fa-calendar-check text-emerald-400"></i> ${item.timestamp}
+            </div>
+            <div class="text-[11px] text-slate-400 mt-1">
+              মোট: <span class="font-bold text-teal-300">৳ ${item.grandTotal.toLocaleString('bn-BD')}</span>
+              (তহবিল: ৳ ${item.totalAssets.toLocaleString('bn-BD')}, পাওনা: ৳ ${item.totalReceivables.toLocaleString('bn-BD')})
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="window.viewSnapshot('${item.id}')" class="text-xs bg-slate-800 text-blue-400 border border-slate-700 px-2 py-1 rounded-lg hover:bg-slate-700">
+              দেখুন
+            </button>
+            <button onclick="window.deleteSnapshot('${item.id}')" class="text-xs text-rose-400 hover:text-rose-300 p-1">
+              <i class="fa-regular fa-trash-can"></i>
+            </button>
+          </div>
+        `;
+        container.appendChild(itemEl);
+      });
+    };
+
+    window.viewSnapshot = function(id) {
+      const snap = state.history.find(x => x.id === id);
+      if (!snap) return;
+
+      document.getElementById('snapshotDateTitle').innerText = snap.timestamp;
+      const content = document.getElementById('snapshotDetailContent');
+      content.innerHTML = `
+        <div class="p-2.5 bg-slate-900 rounded-xl border border-slate-700 flex justify-between">
+          <span class="text-slate-300 font-bold">সর্বমোট পরিমাণ</span>
+          <span class="text-teal-300 font-extrabold text-sm">৳ ${snap.grandTotal.toLocaleString('bn-BD')}</span>
+        </div>
+        <div class="font-bold text-slate-300 mt-2">বর্তমান তহবিল:</div>
+        <div class="space-y-1">
+          ${snap.assets.map(a => `<div class="flex justify-between bg-slate-900/60 p-1.5 px-2 rounded border border-slate-800"><span>${a.title}</span><span class="text-emerald-400 font-semibold">৳ ${Number(a.amount).toLocaleString('bn-BD')}</span></div>`).join('')}
+        </div>
+        <div class="font-bold text-slate-300 mt-2">পাওনা টাকা:</div>
+        <div class="space-y-1">
+          ${snap.receivables.length ? snap.receivables.map(r => `<div class="flex justify-between bg-slate-900/60 p-1.5 px-2 rounded border border-slate-800"><span>${r.title}</span><span class="text-amber-400 font-semibold">৳ ${Number(r.amount).toLocaleString('bn-BD')}</span></div>`).join('') : '<div class="text-slate-500 italic">কোন পাওনা ছিল না</div>'}
+        </div>
+      `;
+      document.getElementById('snapshotDetailModal').classList.remove('hidden');
+    };
+
+    window.deleteSnapshot = function(id) {
+      if (!confirm("এই হিস্ট্রি স্ন্যাপশট মুছে ফেলতে চান?")) return;
+      state.history = state.history.filter(x => x.id !== id);
+      window.renderHistoryList();
+      syncToCloud();
+      showToast("হিস্ট্রি মুছে ফেলা হয়েছে");
+    };
+
+    // পিএনজি (PNG) ডাউনলোড ফাংশন
+    window.downloadAsPNG = function() {
+      showToast("ছবি প্রসেসিং হচ্ছে, অপেক্ষা করুন...");
+      const target = document.getElementById('captureArea');
+
+      html2canvas(target, {
+        scale: 2.5,
+        backgroundColor: '#0f172a',
+        useCORS: true
+      }).then(canvas => {
+        const link = document.createElement('a');
+        const now = new Date();
+        const dateStr = `${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()}`;
+        link.download = `Hisab-Rokkhok-${dateStr}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        showToast("PNG ছবি গ্যালারিতে সেভ হয়েছে!");
+      }).catch(err => {
+        console.error(err);
+        showToast("ছবি তৈরিতে ত্রুটি দেখা দিয়েছে");
+      });
+    };
+
+    window.openModal = function(id) {
+      if (id === 'historyModal') window.renderHistoryList();
+      document.getElementById(id).classList.remove('hidden');
+    };
+
+    window.closeModal = function(id) {
+      document.getElementById(id).classList.add('hidden');
+    };
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').innerText = msg;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 2500);
+    }
+  </script>
+</body>
+</html>
