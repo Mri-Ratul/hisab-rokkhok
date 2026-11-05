@@ -219,7 +219,7 @@
       <form id="passwordForm" onsubmit="handlePasswordSubmit(event)" class="space-y-3">
         <div>
           <label class="block text-xs font-medium text-slate-500 mb-1">পাসওয়ার্ড লিখুন (বাংলায়)</label>
-          <input type="password" id="passwordInput" placeholder="লিখুন" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50">
+          <input type="text" id="passwordInput" placeholder="রক্ষক" required autocomplete="off" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50 font-sans">
         </div>
         <button type="submit" class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs rounded-xl shadow-md shadow-indigo-100 active:scale-95 transition-all">
           যাচাই করুন
@@ -313,7 +313,7 @@
   </div>
 
   <!-- Toast -->
-  <div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white text-xs font-medium px-4 py-2.5 rounded-full shadow-lg opacity-0 pointer-events-none transition-all duration-300 flex items-center space-x-2">
+<div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-[9999] bg-slate-900 text-white text-xs font-medium px-4 py-2.5 rounded-full shadow-2xl opacity-0 pointer-events-none transition-all duration-300 flex items-center space-x-2">
     <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
     <span id="toastMsg">সফলভাবে সম্পন্ন হয়েছে!</span>
   </div>
@@ -398,15 +398,24 @@
     window.handlePasswordSubmit = function(e) {
       e.preventDefault();
       const entered = document.getElementById('passwordInput').value.trim();
-      if (entered === '১২৩') {
+      
+      // পাসওয়ার্ড 'রক্ষক' অথবা ব্যাকআপ হিসেবে '১২৩' / '123' গ্রহণ করবে
+      if (entered === 'রক্ষক' || entered === '১২৩' || entered === '123') {
+        const actionToExecute = pendingCallback;
         window.closePasswordModal();
-        if (pendingCallback) {
-          pendingCallback();
-          pendingCallback = null;
+        window.showToast('পাসওয়ার্ড সঠিক হয়েছে!');
+        
+        // মডাল ট্রানজিশন ক্লিয়ার হতে ১০০ms বিরতি
+        if (actionToExecute) {
+          setTimeout(() => {
+            actionToExecute();
+          }, 100);
         }
       } else {
-        window.showToast('ভুল পাসওয়ার্ড! অ্যাক্সেস প্রত্যাখ্যাত');
-        document.getElementById('passwordInput').value = '';
+        window.showToast('ভুল পাসওয়ার্ড! আবার চেষ্টা করুন');
+        const inputEl = document.getElementById('passwordInput');
+        inputEl.value = '';
+        inputEl.focus();
       }
     };
 
